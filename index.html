@@ -5,9 +5,15 @@
 
     <link rel="stylesheet" type="text/css" href="style.css" />
     <script type="module" src="script.js"></script>
+    <script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBmceqKUN6knUJRQHGvG5xf08rAiiLXMeI&libraries=places&callback=initMap"
+    defer
+  ></script>
   </head>
   <body>
+    <input id = "autocomplete" placeholder="Enter a Location" type="text" />
     <div id="map"></div>
+    <div id="legend"><h3>Legend</h3></div>
 
     <!-- 
       The `defer` attribute causes the callback to execute after the full HTML
@@ -16,9 +22,5 @@
       See https://developers.google.com/maps/documentation/javascript/load-maps-js-api
       for more information.
       -->
-    <script
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBmceqKUN6knUJRQHGvG5xf08rAiiLXMeI&callback=initMap&v=weekly"
-      defer
-    ></script>
   </body>
 </html>
