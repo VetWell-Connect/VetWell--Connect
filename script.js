@@ -1,10 +1,13 @@
 let map;
 let marker;
 let autocomplete;
+let infowindow;
+
+let placeTypeGlobal;
 
 let yogaService;
 let yogaPlaceRequest;
-const YOGA = "yoga";
+const YOGA = "therapeutic yoga";
 
 let meditationService;
 let meditationPlaceRequest;
@@ -22,6 +25,7 @@ let massageTherapyService;
 let massageTherapyPlaceRequest;
 const MASSAGETHERAPY = "massage therapy";
 
+let detailsService;
 const iconBase = "http://maps.google.com/mapfiles/ms/icons/";
 const icons = {
   yoga: {
@@ -98,7 +102,7 @@ function onPlaceChanged(){
       keyword : [YOGA]
     };
     yogaService = new google.maps.places.PlacesService(map);
-    yogaService.nearbySearch(yogaPlaceRequest, yogaCallback);
+    yogaService.nearbySearch(yogaPlaceRequest, yogaSearchCallback);
 
    // Meditation Second
    meditationPlaceRequest = {
@@ -107,7 +111,7 @@ function onPlaceChanged(){
     keyword : [MEDITATION]
    };
    meditationService = new google.maps.places.PlacesService(map);
-   meditationService.nearbySearch(meditationPlaceRequest, meditationCallback)
+   meditationService.nearbySearch(meditationPlaceRequest, meditationSearchCallback)
 
    // Acupuncture Third
    acupuncturePlaceRequest = {
@@ -116,7 +120,7 @@ function onPlaceChanged(){
     keyword : [ACUPUNCTURE]
    };
    acupunctureService = new google.maps.places.PlacesService(map);
-   acupunctureService.nearbySearch(acupuncturePlaceRequest, acupunctureCallback)
+   acupunctureService.nearbySearch(acupuncturePlaceRequest, acupunctureSearchCallback)
 
    // Guided Imagery Fourth
    guidedImageryPlaceRequest = {
@@ -125,7 +129,7 @@ function onPlaceChanged(){
     keyword : [GUIDEDIMAGERY]
    };
    guidedImageryService = new google.maps.places.PlacesService(map);
-   guidedImageryService.nearbySearch(guidedImageryPlaceRequest, guidedImageryCallback)
+   guidedImageryService.nearbySearch(guidedImageryPlaceRequest, guidedImagerySearchCallback)
 
    // Massage Therapy Fifth
    massageTherapyPlaceRequest = {
@@ -134,7 +138,7 @@ function onPlaceChanged(){
     keyword : [MASSAGETHERAPY]
    };
    massageTherapyService = new google.maps.places.PlacesService(map);
-   massageTherapyService.nearbySearch(massageTherapyPlaceRequest, massageTherapyCallback)
+   massageTherapyService.nearbySearch(massageTherapyPlaceRequest, massageTherapySearchCallback)
   }
 }
 
@@ -151,11 +155,15 @@ function createLegend(){
   map.controls[google.maps.ControlPosition.TOP_RIGHT].push(legend);
 }
 
-function yogaCallback(results, status){
-  // alert("yoga callback func called")
+function yogaSearchCallback(results, status){
   if (status == google.maps.places.PlacesServiceStatus.OK) {
     for (var i = 0; i < results.length; i++) {
-      createMarker(results[i], YOGA);
+      var request = {
+        placeId: results[i].place_id,
+        fields: ['name', 'rating','reviews', 'website', 'formatted_address', 'formatted_phone_number', 'geometry', 'photos']
+      };
+      detailsService = new google.maps.places.PlacesService(map);
+      detailsService.getDetails(request, yogaDetailsCallback)
     }
   }
   else{
@@ -163,35 +171,65 @@ function yogaCallback(results, status){
   }
 }
 
-function meditationCallback(results, status){
+function yogaDetailsCallback(place, status){
+  if (status == google.maps.places.PlacesServiceStatus.OK) {
+    createMarker(place, YOGA);
+  }
+}
+
+function meditationSearchCallback(results, status){
   // alert("meditation callback func called")
   if (status == google.maps.places.PlacesServiceStatus.OK) {
     for (var i = 0; i < results.length; i++) {
-      createMarker(results[i], MEDITATION);
+      var request = {
+        placeId: results[i].place_id,
+        fields: ['name', 'rating','reviews', 'website', 'formatted_address', 'formatted_phone_number', 'geometry', 'photos']
+      };
+      detailsService = new google.maps.places.PlacesService(map);
+      detailsService.getDetails(request, meditationDetailsCallback)
     }
   }
   else{
     // alert("No Meditation Facilities Found Nearby")
   }
 }
+function meditationDetailsCallback(place, status){
+  if (status == google.maps.places.PlacesServiceStatus.OK) {
+    createMarker(place, MEDITATION);
+  }
+}
 
-function acupunctureCallback(results, status){
+function acupunctureSearchCallback(results, status){
   // alert("acupuncture callback func called")
   if (status == google.maps.places.PlacesServiceStatus.OK) {
     for (var i = 0; i < results.length; i++) {
-      createMarker(results[i], ACUPUNCTURE);
+      var request = {
+        placeId: results[i].place_id,
+        fields: ['name', 'rating','reviews', 'website', 'formatted_address', 'formatted_phone_number', 'geometry', 'photos']
+      };
+      detailsService = new google.maps.places.PlacesService(map);
+      detailsService.getDetails(request, acupunctureDetailsCallback)
     }
   }
   else{
     // alert("No Acupuncture Facilities Found Nearby")
   }
 }
-
-function guidedImageryCallback(results, status){
+function acupunctureDetailsCallback(place, status){
+  if (status == google.maps.places.PlacesServiceStatus.OK) {
+    createMarker(place, ACUPUNCTURE);
+  }
+}
+function guidedImagerySearchCallback(results, status){
   // alert("guided imagery callback func called")
   if (status == google.maps.places.PlacesServiceStatus.OK) {
     for (var i = 0; i < results.length; i++) {
-      createMarker(results[i], GUIDEDIMAGERY);
+      var request = {
+        placeId: results[i].place_id,
+        fields: ['name', 'rating','reviews', 'website', 'formatted_address', 'formatted_phone_number', 'geometry', 'photos']
+      };
+      detailsService = new google.maps.places.PlacesService(map);
+      detailsService.getDetails(request, guidedImageryDetailsCallback)
     }
   }
   else{
@@ -199,11 +237,22 @@ function guidedImageryCallback(results, status){
   }
 }
 
-function massageTherapyCallback(results, status){
+function guidedImageryDetailsCallback(place, status){
+  if (status == google.maps.places.PlacesServiceStatus.OK) {
+    createMarker(place, GUIDEDIMAGERY);
+  }
+}
+
+function massageTherapySearchCallback(results, status){
   // alert("massage therapy callback func called")
   if (status == google.maps.places.PlacesServiceStatus.OK) {
     for (var i = 0; i < results.length; i++) {
-      createMarker(results[i], MASSAGETHERAPY);
+      var request = {
+        placeId: results[i].place_id,
+        fields: ['name', 'rating','reviews', 'website', 'formatted_address', 'formatted_phone_number', 'geometry', 'photos']
+      };
+      detailsService = new google.maps.places.PlacesService(map);
+      detailsService.getDetails(request, massageTherapyDetailsCallback)
     }
   }
   else{
@@ -211,8 +260,55 @@ function massageTherapyCallback(results, status){
   }
 }
 
+function massageTherapyDetailsCallback(place, status){
+  if (status == google.maps.places.PlacesServiceStatus.OK) {
+    createMarker(place, MASSAGETHERAPY);
+  }
+}
+
 function createMarker(place, placeType) {
   if (!place.geometry || !place.geometry.location) return;
+
+  let photoHTML = '';
+  if (place.photos && place.photos.length > 0) {
+    const photo = place.photos[0]; // Assuming you want to display the first photo
+    photoHTML = '<img src="' + photo.getUrl({ maxWidth: 200 }) + '">';
+  } else {
+    photoHTML = '<p>No photo available</p>';
+  }
+
+  // Generate HTML for the name
+  const nameHTML = '<h1>' + place.name + '</h1>';
+
+  // Generate HTML for the address, phone number, website, rating, and reviews
+  let detailsHTML = '<p><b>Address:</b> ' + place.formatted_address + '</p>' +
+                    '<p><b>Phone:</b> ' + place.formatted_phone_number + '</p>' +
+                    '<p><b>Website:</b> <a href="' + place.website + '">' + place.website + '</a></p>' +
+                    '<p><b>Rating:</b> ' + place.rating + '</p>';
+
+  // Add reviews if available
+  if (place.reviews && place.reviews.length > 0) {
+    detailsHTML += '<h2>Reviews:</h2>';
+    place.reviews.forEach(review => {
+      detailsHTML += '<p><b>Author:</b> ' + review.author_name + '</p>' +
+                     '<p><b>Rating:</b> ' + review.rating + '</p>' +
+                     '<p><b>Review:</b> ' + review.text + '</p>';
+    });
+  } else {
+    detailsHTML += '<p>No reviews available</p>';
+  }
+
+  // Concatenate all HTML elements
+  const contentString =
+    '<div id="content">' +
+    '<div id="siteNotice"></div>' +
+    '<div id="bodyContent">' +
+    photoHTML +
+    nameHTML +
+    detailsHTML +
+    '</div>' +
+    '</div>';
+
   if( placeType == YOGA){
  
     const marker = new google.maps.Marker({
@@ -220,8 +316,14 @@ function createMarker(place, placeType) {
       icon: icons.yoga.icon,
       map,
     });
+
     google.maps.event.addListener(marker, "click", () => {
-      alert(place.name);
+      
+      infowindow = new google.maps.InfoWindow();
+      infowindow.setContent(contentString);
+      infowindow.setPosition(place.geometry.location);
+      infowindow.open(map);
+      
     });
   } else if (placeType == MEDITATION){
     const marker = new google.maps.Marker({
@@ -230,7 +332,12 @@ function createMarker(place, placeType) {
       icon: icons.meditation.icon
     });
     google.maps.event.addListener(marker, "click", () => {
-      alert(place.name);
+      
+      infowindow = new google.maps.InfoWindow();
+      infowindow.setContent(contentString);
+      infowindow.setPosition(place.geometry.location);
+      infowindow.open(map);
+      
     });
   } else if ( placeType == ACUPUNCTURE){
     const marker = new google.maps.Marker({
@@ -239,7 +346,12 @@ function createMarker(place, placeType) {
       icon: icons.acupuncture.icon
     });
     google.maps.event.addListener(marker, "click", () => {
-      alert(place.name);
+      
+      infowindow = new google.maps.InfoWindow();
+      infowindow.setContent(contentString);
+      infowindow.setPosition(place.geometry.location);
+      infowindow.open(map);
+      
     });
   } else if (placeType == GUIDEDIMAGERY){
     const marker = new google.maps.Marker({
@@ -248,7 +360,12 @@ function createMarker(place, placeType) {
       icon: icons.guidedImagery.icon
     });
     google.maps.event.addListener(marker, "click", () => {
-      alert(place.name);
+
+      infowindow = new google.maps.InfoWindow();
+      infowindow.setContent(contentString);
+      infowindow.setPosition(place.geometry.location);
+      infowindow.open(map);
+      
     });
   } else if (placeType == MASSAGETHERAPY){
     const marker = new google.maps.Marker({
@@ -257,7 +374,12 @@ function createMarker(place, placeType) {
       icon: icons.massageTherapy.icon
     });
     google.maps.event.addListener(marker, "click", () => {
-      alert(place.name);
+
+      infowindow = new google.maps.InfoWindow();
+      infowindow.setContent(contentString);
+      infowindow.setPosition(place.geometry.location);
+      infowindow.open(map);
+      
     });
   }
 }
