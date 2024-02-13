@@ -98,7 +98,7 @@ function onPlaceChanged(){
     // Yoga First
     yogaPlaceRequest = {
       location: place.geometry.location,
-      radius: 10000,
+      radius: 16093.4,
       keyword : [YOGA]
     };
     yogaService = new google.maps.places.PlacesService(map);
@@ -107,7 +107,7 @@ function onPlaceChanged(){
    // Meditation Second
    meditationPlaceRequest = {
     location: place.geometry.location,
-    radius: 10000,
+    radius: 16093.4,
     keyword : [MEDITATION]
    };
    meditationService = new google.maps.places.PlacesService(map);
@@ -116,7 +116,7 @@ function onPlaceChanged(){
    // Acupuncture Third
    acupuncturePlaceRequest = {
     location: place.geometry.location,
-    radius: 10000,
+    radius: 16093.4,
     keyword : [ACUPUNCTURE]
    };
    acupunctureService = new google.maps.places.PlacesService(map);
@@ -125,7 +125,7 @@ function onPlaceChanged(){
    // Guided Imagery Fourth
    guidedImageryPlaceRequest = {
     location: place.geometry.location,
-    radius: 10000,
+    radius: 16093.4,
     keyword : [GUIDEDIMAGERY]
    };
    guidedImageryService = new google.maps.places.PlacesService(map);
@@ -134,7 +134,7 @@ function onPlaceChanged(){
    // Massage Therapy Fifth
    massageTherapyPlaceRequest = {
     location: place.geometry.location,
-    radius: 10000,
+    radius: 16093.4,
     keyword : [MASSAGETHERAPY]
    };
    massageTherapyService = new google.maps.places.PlacesService(map);
