@@ -1,31 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
-    <!-- This page is the dashboard for home page--> 
 
 <head>
-    <title>Login Page</title>
+    <title>Register</title>
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <meta charset="UTF-8">
     <link rel="stylesheet" href="styles.css">
     <script src="particles.js"></script>
-    <script src="https://kit.fontawesome.com/f8eb2ae40d.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.2/css/fontawesome.min.css">
-    <!-- This is referring back to the login pages --> 
-    <script defer type="module" src="login-with-google.js"></script>
-    <script defer type="module" src="login-with-email.js"></script>
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.2/css/fontawesome.min.css">
+    <script defer type="module" src="create-account-with-email.js"></script>
 </head>
 
 <body>
     <section>
-
-
         <div id="particles-js" class="image">
-
         </div>
 
         <div class="content">
             <div class="form">
-                <h2>Login</h2>
+                <h2>Register</h2>
                 <form action="#">
                     <div class="input">
                         <span>Email</span>
@@ -35,25 +29,14 @@
                         <span>Password</span>
                         <input type="password" name="" required id="password">
                     </div>
-
-                    <div class="remember-me">
-                        <label>
-                            <input type="checkbox" name=""> Remember me?
-                        </label>
-                    </div>
-
                     <div class="input">
-                        <input type="submit" value="Login" name="" id="submit-button">
+                        <input type="submit" value="Register" name="" id="submit-button">
                     </div>
                     <div class="input text">
-                        <p>Dont have an account? <a href="create-account.html">Create one.</a></p>
-
-                        <div class="input">
-                            <button type="button" id="google-login" class="login-with-google-btn"><i class="fab fa-google"></i>
-                                Sign in with Google
-                            </button>
-                        </div>
-
+                        <p>Have an account?
+                            <a href="index.html">login here.</a>
+                        </p>
+                    </div>
                 </form>
 
                 <ul class="social">
@@ -62,10 +45,9 @@
                     <li><img src="social/whatsapp.png"></li>
                 </ul>
             </div>
-
         </div>
-    </section>
 
+    </section>
 </body>
 
 </html>
