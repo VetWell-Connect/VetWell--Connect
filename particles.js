@@ -1,3 +1,5 @@
+//This is not needed for functionality , I just was playing around with the look of the page.
+
 var pJS = function(tag_id, params){
 
   var canvas_el = document.querySelector('#'+tag_id+' > .particles-js-canvas-el');
