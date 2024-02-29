@@ -2,7 +2,7 @@ let map;
 let marker;
 let autocomplete;
 let infowindow;
-
+let startingLocation;
 let placeTypeGlobal;
 
 let yogaService;
@@ -26,6 +26,9 @@ let massageTherapyPlaceRequest;
 const MASSAGETHERAPY = "massage therapy";
 
 let detailsService;
+let directionsService;
+let directionsRenderer;
+
 const iconBase = "http://maps.google.com/mapfiles/ms/icons/";
 const icons = {
   yoga: {
@@ -58,6 +61,13 @@ function initMap() {
     center: howard,
     mapTypeControl: false,
   });
+
+  // Initialize Directions Service and Renderer
+  directionsService = new google.maps.DirectionsService();
+  directionsRenderer = new google.maps.DirectionsRenderer();
+  directionsRenderer.setMap(map);
+
+  // Create Map Legend 
   createLegend();
 
   const inputText = document.getElementById("autocomplete");
@@ -83,21 +93,20 @@ function initMap() {
 function onPlaceChanged(){
 
   // Step 1: Retrieve User Inputted Address
-  var place = autocomplete.getPlace();
+  startingLocation = autocomplete.getPlace();
 
-  if (!place.geometry){
+  if (!startingLocation.geometry){
     inputText.placeholder = "Enter a Location";
   } else{
   // Step 2: Mark User Inputted Addres on Map with "YOU ARE HERE"
-    map.setCenter(place.geometry.location);
-    marker.setPosition(place.geometry.location);
+    map.setCenter(startingLocation.geometry.location);
+    marker.setPosition(startingLocation.geometry.location);
     marker.setMap(map);
-    marker.setLabel("You are Here");
 
   // Step 3: Search for nearby specific facility
     // Yoga First
     yogaPlaceRequest = {
-      location: place.geometry.location,
+      location: startingLocation.geometry.location,
       radius: 16093.4,
       keyword : [YOGA]
     };
@@ -106,7 +115,7 @@ function onPlaceChanged(){
 
    // Meditation Second
    meditationPlaceRequest = {
-    location: place.geometry.location,
+    location: startingLocation.geometry.location,
     radius: 16093.4,
     keyword : [MEDITATION]
    };
@@ -115,7 +124,7 @@ function onPlaceChanged(){
 
    // Acupuncture Third
    acupuncturePlaceRequest = {
-    location: place.geometry.location,
+    location: startingLocation.geometry.location,
     radius: 16093.4,
     keyword : [ACUPUNCTURE]
    };
@@ -124,7 +133,7 @@ function onPlaceChanged(){
 
    // Guided Imagery Fourth
    guidedImageryPlaceRequest = {
-    location: place.geometry.location,
+    location: startingLocation.geometry.location,
     radius: 16093.4,
     keyword : [GUIDEDIMAGERY]
    };
@@ -133,7 +142,7 @@ function onPlaceChanged(){
 
    // Massage Therapy Fifth
    massageTherapyPlaceRequest = {
-    location: place.geometry.location,
+    location: startingLocation.geometry.location,
     radius: 16093.4,
     keyword : [MASSAGETHERAPY]
    };
@@ -286,17 +295,20 @@ function createMarker(place, placeType) {
                     '<p><b>Website:</b> <a href="' + place.website + '">' + place.website + '</a></p>' +
                     '<p><b>Rating:</b> ' + place.rating + '</p>';
 
+  /*
   // Add reviews if available
   if (place.reviews && place.reviews.length > 0) {
     detailsHTML += '<h2>Reviews:</h2>';
-    place.reviews.forEach(review => {
+    for (let i = 0; i < Math.min(place.reviews.length, 2); i++) {
+      const review = place.reviews[i];
       detailsHTML += '<p><b>Author:</b> ' + review.author_name + '</p>' +
-                     '<p><b>Rating:</b> ' + review.rating + '</p>' +
-                     '<p><b>Review:</b> ' + review.text + '</p>';
-    });
+        '<p><b>Rating:</b> ' + review.rating + '</p>' +
+        '<p><b>Review:</b> ' + review.text + '</p>';
+    }
   } else {
     detailsHTML += '<p>No reviews available</p>';
   }
+  */
 
   // Concatenate all HTML elements
   const contentString =
@@ -309,6 +321,7 @@ function createMarker(place, placeType) {
     '</div>' +
     '</div>';
 
+
   if( placeType == YOGA){
  
     const marker = new google.maps.Marker({
@@ -319,10 +332,19 @@ function createMarker(place, placeType) {
 
     google.maps.event.addListener(marker, "click", () => {
       
-      infowindow = new google.maps.InfoWindow();
+      infowindow = new google.maps.InfoWindow();      
       infowindow.setContent(contentString);
       infowindow.setPosition(place.geometry.location);
+      infowindow.setOptions({
+        maxWidth: 250,
+      });
       infowindow.open(map);
+
+      // Add listener for closeclick event
+      google.maps.event.addListener(infowindow, 'closeclick', () => {
+        // Recalculate route and display it on the map
+        calcRoute(place.geometry.location);
+      });
       
     });
   } else if (placeType == MEDITATION){
@@ -333,10 +355,19 @@ function createMarker(place, placeType) {
     });
     google.maps.event.addListener(marker, "click", () => {
       
-      infowindow = new google.maps.InfoWindow();
+      infowindow = new google.maps.InfoWindow();      
       infowindow.setContent(contentString);
       infowindow.setPosition(place.geometry.location);
+      infowindow.setOptions({
+        maxWidth: 250,
+      });
       infowindow.open(map);
+
+      // Add listener for closeclick event
+      google.maps.event.addListener(infowindow, 'closeclick', () => {
+        // Recalculate route and display it on the map
+        calcRoute(place.geometry.location);
+      });
       
     });
   } else if ( placeType == ACUPUNCTURE){
@@ -347,10 +378,19 @@ function createMarker(place, placeType) {
     });
     google.maps.event.addListener(marker, "click", () => {
       
-      infowindow = new google.maps.InfoWindow();
+      infowindow = new google.maps.InfoWindow();      
       infowindow.setContent(contentString);
       infowindow.setPosition(place.geometry.location);
+      infowindow.setOptions({
+        maxWidth: 250,
+      });
       infowindow.open(map);
+
+      // Add listener for closeclick event
+      google.maps.event.addListener(infowindow, 'closeclick', () => {
+        // Recalculate route and display it on the map
+        calcRoute(place.geometry.location);
+      });
       
     });
   } else if (placeType == GUIDEDIMAGERY){
@@ -361,10 +401,19 @@ function createMarker(place, placeType) {
     });
     google.maps.event.addListener(marker, "click", () => {
 
-      infowindow = new google.maps.InfoWindow();
+      infowindow = new google.maps.InfoWindow();      
       infowindow.setContent(contentString);
       infowindow.setPosition(place.geometry.location);
+      infowindow.setOptions({
+        maxWidth: 250,
+      });
       infowindow.open(map);
+
+      // Add listener for closeclick event
+      google.maps.event.addListener(infowindow, 'closeclick', () => {
+        // Recalculate route and display it on the map
+        calcRoute(place.geometry.location);
+      });
       
     });
   } else if (placeType == MASSAGETHERAPY){
@@ -375,14 +424,44 @@ function createMarker(place, placeType) {
     });
     google.maps.event.addListener(marker, "click", () => {
 
-      infowindow = new google.maps.InfoWindow();
+      infowindow = new google.maps.InfoWindow();      
       infowindow.setContent(contentString);
       infowindow.setPosition(place.geometry.location);
+      infowindow.setOptions({
+        maxWidth: 250,
+      });
       infowindow.open(map);
-      
+
+      // Add listener for closeclick event
+      google.maps.event.addListener(infowindow, 'closeclick', () => {
+        // Recalculate route and display it on the map
+        calcRoute(place.geometry.location);
+      });
     });
+
   }
 }
+
+function calcRoute(destination){
+
+  let directionsRequest = {
+    origin: startingLocation.geometry.location,
+    destination: destination,
+    travelMode: "DRIVING",
+
+  }
+
+  directionsService.route(directionsRequest, function(result, status){
+    if (status == "OK"){
+      directionsRenderer.setDirections(result);
+
+      // Adjust the map's zoom level to fit the route
+      map.fitBounds(result.routes[0].bounds);
+
+    }
+  })
+}
+
 
 
 window.initMap = initMap;
